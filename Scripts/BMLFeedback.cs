@@ -22,42 +22,36 @@ namespace ASAP {
 
         public T ParseFeedbackBlock<T>(string block) {
             T res = default(T);
-            XmlSerializer serializer = new XmlSerializer(typeof(T));
-            using (StringReader reader = new StringReader(block)) {
-                res = (T)(serializer.Deserialize(reader));
+            try {
+                XmlSerializer serializer = new XmlSerializer(typeof(T));
+                using (StringReader reader = new StringReader(block)) {
+                    res = (T)(serializer.Deserialize(reader));
+                }
+            } catch (System.Exception xmle) {
+                Debug.LogWarning("Exception while parsing feedback: " + xmle + "\n\n" + block);
             }
             return res;
          }
 
         public void HandleFeedback(string feedback) {
-            try { 
-                if (feedback.StartsWith("<blockProgress")) {
-                    BlockProgress blockProgress = ParseFeedbackBlock<BlockProgress>(feedback);
-                    //Debug.Log("[blockProgress] " + blockProgress.status + " "+blockProgress.id);
-					if (BlockProgressEventHandler != null)
-                    	BlockProgressEventHandler(blockProgress);
-                } else if (feedback.StartsWith("<predictionFeedback")) {
-                    PredictionFeedback predictionFeedback = ParseFeedbackBlock<PredictionFeedback>(feedback);
-					//Debug.Log("[predictionFeedback] " + predictionFeedback.bml.id+" -- "+predictionFeedback.bml.status);
-					if (PredictionFeedbackEventHandler != null)
-                    	PredictionFeedbackEventHandler(predictionFeedback);
-                } else if (feedback.StartsWith("<syncPointProgress")) {
-                    SyncPointProgress syncPointProgress = ParseFeedbackBlock<SyncPointProgress>(feedback);
-					//Debug.Log("[syncPointProgress] " + syncPointProgress.id);
-					if (SyncPointProgressEventHandler != null)
-                    	SyncPointProgressEventHandler(syncPointProgress);
-                } else if (feedback.StartsWith("<warningFeedback")) {
-                    WarningFeedback warningFeedback = ParseFeedbackBlock<WarningFeedback>(feedback);
-					//Debug.LogWarning("[warningFeedback] " + warningFeedback.id+"\n"+warningFeedback.Value);
-					if (WarningFeedbackEventHandler != null)
-                    	WarningFeedbackEventHandler(warningFeedback);
-                } else {
-                    //Debug.LogWarning(feedback);
-                }
-            } catch (System.Xml.XmlException xmle) {
-                Debug.LogWarning("Exception while parsing feedback: " + xmle + "\n\n" +feedback);
-            } finally {
-                //ExperimentLogger.LOG_STRIP_NEWLINES(feedback, "bmlFeedback");
+            if (feedback.StartsWith("<blockProgress")) {
+                BlockProgress blockProgress = ParseFeedbackBlock<BlockProgress>(feedback);
+                //Debug.Log("[blockProgress] " + blockProgress.status + " "+blockProgress.id);
+                BlockProgressEventHandler.Invoke(blockProgress);
+            } else if (feedback.StartsWith("<predictionFeedback")) {
+                PredictionFeedback predictionFeedback = ParseFeedbackBlock<PredictionFeedback>(feedback);
+                //Debug.Log("[predictionFeedback] " + predictionFeedback.bml.id+" -- "+predictionFeedback.bml.status);
+                PredictionFeedbackEventHandler.Invoke(predictionFeedback);
+            } else if (feedback.StartsWith("<syncPointProgress")) {
+                SyncPointProgress syncPointProgress = ParseFeedbackBlock<SyncPointProgress>(feedback);
+                //Debug.Log("[syncPointProgress] " + syncPointProgress.id);
+                SyncPointProgressEventHandler.Invoke(syncPointProgress);
+            } else if (feedback.StartsWith("<warningFeedback")) {
+                WarningFeedback warningFeedback = ParseFeedbackBlock<WarningFeedback>(feedback);
+                Debug.LogWarning("[warningFeedback] " + warningFeedback.id+"\n"+warningFeedback.Value);
+                WarningFeedbackEventHandler.Invoke(warningFeedback);
+            } else {
+                //Debug.LogWarning(feedback);
             }
         }
 

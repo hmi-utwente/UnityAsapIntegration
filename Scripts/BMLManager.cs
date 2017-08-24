@@ -4,22 +4,20 @@ using UnityEngine;
 
 namespace ASAP {
 
-	[RequireComponent(typeof(ASAPManager))]
+	[RequireComponent(typeof(IMiddleware))]
     [RequireComponent(typeof(BMLFeedback))]
-    [RequireComponent(typeof(BMLRequests))]
-    public class BMLManager : MonoBehaviour {
-        IMiddleware middleware;
-		BMLFeedback feedback;
-		ASAPManager asapManager;
+    public class BMLManager : MonoBehaviour, IMiddlewareListener {
+	    
+	    public ASAPManager asapManager;
+	    
+		private BMLFeedback feedback;
+	    private Middleware middleware;
 
         void Start() {
-			asapManager = GetComponent<ASAPManager> ();
-			middleware = new STOMPMiddleware("tcp://" + asapManager.middlewareLocation + ":61613", "topic://bmlFeedback", "topic://bmlRequests", "admin", "password", false);
+            if (asapManager == null) asapManager = FindObjectOfType<ASAPManager>();
             feedback = GetComponent<BMLFeedback>();
-        }
-
-        void Update() {
-            ReadMessages();
+            middleware = GetComponent<Middleware>();
+            if (middleware != null) middleware.Register(this);
         }
 
         public void SendBML(string bml) {
@@ -35,18 +33,20 @@ namespace ASAP {
         }
 
         public void Send(string data) {
-            middleware.SendMessage(data);
+            middleware.Send(data);
         }
 
-        void ReadMessages() {
-            string rawMsg = middleware.ReadMessage();
+        public void OnMessage(string rawMsg) {
             if (rawMsg.Length == 0) return;
-            FeedbackMiddlewareMessage msg = JsonUtility.FromJson<FeedbackMiddlewareMessage>(rawMsg);
-            feedback.HandleFeedback(System.Uri.UnescapeDataString(msg.feedback.content).Replace('+',' '));
+            try {
+                FeedbackMiddlewareMessage msg = JsonUtility.FromJson<FeedbackMiddlewareMessage>(rawMsg);
+                feedback.HandleFeedback(System.Uri.UnescapeDataString(msg.feedback.content).Replace('+', ' '));
+            } catch (System.ArgumentException ae) {
+                Debug.Log("Message not valid JSON:\n" + rawMsg + "\n\n" + ae);
+            }
         }
 
         void OnApplicationQuit() {
-            middleware.Close();
         }
     }
 

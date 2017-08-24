@@ -65,7 +65,8 @@ namespace ASAP {
     public class AgentState : AsapMessage {
         public int nBones;
         public int nFaceTargets;
-        public BoneTransform[] boneValues;
+        public BoneTranslation[] boneTranslations;
+        public BoneLocalRotation[] boneValues;
         public float[] faceTargetValues;
 
         //
@@ -94,33 +95,56 @@ namespace ASAP {
     }
 
     [System.Serializable]
-    public class BoneTransform {
+    public class BoneTranslation {
         public float[] t;
 
-        public BoneTransform(BinaryReader br) {
+        public BoneTranslation(BinaryReader br) {
             float x = br.ReadSingle();
             float y = br.ReadSingle();
             float z = br.ReadSingle();
+            // Just like when parsed in json, the transform parsed from
+            // binary does not have the handednes cos converted yet
+            t = new float[] { x, y, z };
+        }
+
+        // For debugging purpose, to simulate input from ASAP
+        // Yes, we inveret the unity cos just so it can get inverted again in the pipeline
+        public BoneTranslation(Transform transform) {
+            float x = -transform.localPosition.x;
+            float y = transform.localPosition.y;
+            float z = transform.localPosition.z;
+            t = new float[] { x, y, z };
+        }
+    }
+
+    [System.Serializable]
+    public class BoneLocalRotation {
+        public float[] r;
+
+        public BoneLocalRotation(BinaryReader br) {
+            //float x = br.ReadSingle();
+            //float y = br.ReadSingle();
+            //float z = br.ReadSingle();
             float qx = br.ReadSingle();
             float qy = br.ReadSingle();
             float qz = br.ReadSingle();
             float qw = br.ReadSingle();
             // Just like when parsed in json, the transform parsed from
             // binary does not have the handednes cos converted yet
-            t = new float[] { x, y, z, qx, qy, qz, qw };
+            r = new float[] { /*x, y, z,*/ qx, qy, qz, qw };
         }
 
         // For debugging purpose, to simulate input from ASAP
         // Yes, we inveret the unity cos just so it can get inverted again in the pipeline
-        public BoneTransform(Transform transform) {
-            float x = -transform.localPosition.x;
-            float y = transform.localPosition.y;
-            float z = transform.localPosition.z;
+        public BoneLocalRotation(Transform transform) {
+            //float x = -transform.localPosition.x;
+            //float y = transform.localPosition.y;
+            //float z = transform.localPosition.z;
             float qx = -transform.localRotation.x;
             float qy = transform.localRotation.y;
             float qz = transform.localRotation.z;
             float qw = -transform.localRotation.w;
-            t = new float[] { x, y, z, qx, qy, qz, qw };
+            r = new float[] { /*x, y, z,*/ qx, qy, qz, qw };
         }
     }
 

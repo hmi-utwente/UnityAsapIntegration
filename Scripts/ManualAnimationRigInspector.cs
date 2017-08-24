@@ -216,10 +216,12 @@ namespace ASAP {
                 w.WriteStartDocument();
                 w.WriteStartElement("bml", "http://www.bml-initiative.org/bml/bml-1.0"); // <bml ...>
                 w.WriteAttributeString("id", "exportedBml1");
-                w.WriteAttributeString("xmlns:bmlt", "http://hmi.ewi.utwente.nl/bmlt");
+                w.WriteAttributeString("xmlns", "bmlt", null, "http://hmi.ewi.utwente.nl/bmlt");
+
 
                 if (mode == ManualAnimationRig.ExportMode.Keyframes) {
-                    w.WriteStartElement("bmlt:keyframe"); // <bmlt:keyframe ...>
+                    //w.WriteStartElement("bmlt:keyframe"); // <bmlt:keyframe ...>
+                    w.WriteStartElement("bmlt", "keyframe", null); // <bmlt:keyframe ...>
                     w.WriteAttributeString("id", "keyframes1");
                     w.WriteStartElement("SkeletonInterpolator"); // <SkeletonInterpolator ...>
                     w.WriteAttributeString("parts", parts);
@@ -233,7 +235,8 @@ namespace ASAP {
                     w.WriteEndElement(); // </SkeletonInterpolator>
                     w.WriteEndElement(); // </bmlt:keyframe>
                 } else if (mode == ManualAnimationRig.ExportMode.ProcAnimationGesture) {
-                    w.WriteStartElement("bmlt:procanimationgesture"); // <bmlt:procanimationgesture ...>
+                   // w.WriteStartElement("bmlt:procanimationgesture"); // <bmlt:procanimationgesture ...>
+                    w.WriteStartElement("bmlt", "procanimationgesture", null); // <bmlt:procanimationgesture ...>
                     w.WriteAttributeString("id", "procgesture1");
                     w.WriteStartElement("ProcAnimation");  // < ProcAnimation ...>
                     w.WriteAttributeString("prefDuration", clip.length.ToString("0.0##"));
@@ -268,7 +271,9 @@ namespace ASAP {
             }
             StreamReader sr = new StreamReader(ms);
             ms.Seek(0, SeekOrigin.Begin);
-            Debug.Log(sr.ReadToEnd());
+            string xml = sr.ReadToEnd();
+            Debug.Log(xml);
+            Transform.FindObjectOfType<BMLRequests>().SendBML(xml);
             sr.Dispose();
         }
 

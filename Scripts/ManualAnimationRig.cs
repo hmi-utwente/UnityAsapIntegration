@@ -44,23 +44,22 @@ namespace ASAP {
 
         private void Update() {
             if (ManualAnimation) {
-                List<BoneTransform> boneValues = new List<BoneTransform>();
+                List<BoneLocalRotation> boneValues = new List<BoneLocalRotation>();
+                List<BoneTranslation> boneTranslations = new List<BoneTranslation>();
 
+                int boneIdx = 0;
                 foreach (BoneSpec boneSpec in controlledAgent.agentSpec.bones) {
                     if (hAnimLUT.ContainsKey(boneSpec.hAnimName)) {
-                        boneValues.Add(new BoneTransform(hAnimLUT[boneSpec.hAnimName]));
+                        boneValues.Add(new BoneLocalRotation(hAnimLUT[boneSpec.hAnimName]));
+                        if (boneIdx < 2) boneTranslations.Add(new BoneTranslation(hAnimLUT[boneSpec.hAnimName]));
                     } else Debug.LogError("Could not find bone from spec in animationRig: " + boneSpec.hAnimName);
+
+                    boneIdx++;
                 }
-                /*
-                foreach (BoneSpec boneSpec in controlledAgent.agentSpec.bones) {
-                    Transform bone = FindDeepChild(vjointRoot.parent, boneSpec.hAnimName);
-                    if (bone != null)
-                        boneValues.Add(new BoneTransform(bone));
-                    else
-                        Debug.LogError("Could not find bone from spec in animationRig: "+boneSpec.hAnimName);
-                }*/
 
                 if (controlledAgent.agentState == null) controlledAgent.agentState = new AgentState();
+
+                controlledAgent.agentState.boneTranslations = boneTranslations.ToArray();
                 controlledAgent.agentState.boneValues = boneValues.ToArray();
             }
         }

@@ -161,15 +161,18 @@ namespace ASAP {
             for (int b = 0; b < agentState.boneValues.Length; b++) {
                 //bones[b].localPosition = agentState.positions[b];
                 //bones[b].localRotation = agentState.rotations[b];
-                Vector3 newPosition = new Vector3(
-                    -agentState.boneValues[b].t[0], // Minus x value b/c of different COS in ASAP
-                    agentState.boneValues[b].t[1],
-                    agentState.boneValues[b].t[2]);
+                Vector3 newPosition = Vector3.zero;
+                if (b < 2) {
+                    newPosition = new Vector3(
+                        -agentState.boneTranslations[b].t[0], // Minus x value b/c of different COS in ASAP
+                         agentState.boneTranslations[b].t[1],
+                         agentState.boneTranslations[b].t[2]);
+                }
                 Quaternion newRotation = new Quaternion(
-                    -agentState.boneValues[b].t[3], // Same with order and sign of quat values
-                    agentState.boneValues[b].t[4],
-                    agentState.boneValues[b].t[5],
-                    -agentState.boneValues[b].t[6]);
+                    -agentState.boneValues[b].r[0], // Same with order and sign of quat values
+                     agentState.boneValues[b].r[1],
+                     agentState.boneValues[b].r[2],
+                    -agentState.boneValues[b].r[3]);
                 if (b == 0) {
                     // Humanoid Root
                     bones[b].position = newPosition;

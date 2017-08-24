@@ -117,13 +117,12 @@ namespace ASAP {
         }
 
         public virtual void ApplyAgentState() {
-            //Debug.Log("Would Set AGent Sate...");
             for (int b = 0; b < agentState.boneValues.Length; b++) {
                 Quaternion newRotation = new Quaternion(
-                    -agentState.boneValues[b].t[3], // Same with order and sign of quat values
-                    agentState.boneValues[b].t[4],
-                    agentState.boneValues[b].t[5],
-                    -agentState.boneValues[b].t[6]);
+                    -agentState.boneValues[b].r[0], // Same with order and sign of quat values
+                     agentState.boneValues[b].r[1],
+                     agentState.boneValues[b].r[2],
+                    -agentState.boneValues[b].r[3]);
                 bones[b].localRotation = qInit[b] * RGi[b] * newRotation * RG[b];
             }
 
@@ -142,6 +141,20 @@ namespace ASAP {
             } else {
                 return "";
             }
+        }
+
+        // Returns a transform object of the actual character model's bone
+        // corresponding to HAnim name
+        public virtual Transform GetBoneByHAnimName(string hAnimName) {
+            if (agentSpec != null && agentSpec.bones != null && bones != null
+                && bones.Length == agentSpec.bones.Length) {
+                for (int i=0; i < agentSpec.bones.Length; i++) {
+                    if (agentSpec.bones[i].hAnimName == hAnimName) {
+                        return bones[i];
+                    }
+                }
+            }
+            return null;
         }
 
         public Transform FindChildRecursive(Transform root, string name) {

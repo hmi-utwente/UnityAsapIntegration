@@ -15,12 +15,12 @@ namespace ASAP {
 	*/
 	public class ExampleBmlFeedbackHandler : MonoBehaviour {
 
-		BMLFeedback bmlFeedback;
+		public BMLFeedback bmlFeedback;
 
 		Dictionary<string, float> activeBehaviorStack;
 
 		void Start() {
-			bmlFeedback = FindObjectOfType<BMLFeedback>();
+			if (bmlFeedback == null) bmlFeedback = FindObjectOfType<BMLFeedback>();
 			if (bmlFeedback == null) {
 				Debug.LogError("Could not find BMLFeedback component in scene!");
 			} else {
@@ -62,7 +62,7 @@ namespace ASAP {
 			if (!id.StartsWith("speechbml") || activeBehaviorStack.ContainsKey(id)) return;
 			if (activeBehaviorStack.Count == 0) {
 				// Send event that we're starting talking.
-				Debug.Log("speechbml block starts");
+				Debug.Log("speechbml block starts: "+id);
 			}
 
 			activeBehaviorStack.Add(id, Time.time);
@@ -74,7 +74,7 @@ namespace ASAP {
 
 			if (activeBehaviorStack.Count == 0) {
 				// Send event that we're done talking.
-				Debug.Log("speechbml block ends");
+				Debug.Log("speechbml block ends: "+id);
 			}
 		}
 	}

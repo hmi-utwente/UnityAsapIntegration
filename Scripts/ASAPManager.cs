@@ -6,13 +6,12 @@ using System.IO;
 
 namespace ASAP {
 
-    public class ASAPManager : MonoBehaviour {
+    public class ASAPManager : MonoBehaviour, IMiddlewareListener {
 
-        public string middlewareLocation = "127.0.0.1";
         public int worldUpdateFrequency = 15;
-        float nextWorldUpdate = 0.0f;
-        IMiddleware middleware;
-
+        
+        private float nextWorldUpdate = 0.0f;
+        private Middleware middleware;
 
         Dictionary<string, ASAPAgent> agents;
         Dictionary<string, AgentSpecRequest> agentRequests;
@@ -22,13 +21,11 @@ namespace ASAP {
             agents = new Dictionary<string, ASAPAgent>();
             agentRequests = new Dictionary<string, AgentSpecRequest>();
             worldObjects = new Dictionary<string, VJoint>();
-            middleware = new STOMPMiddleware("tcp://"+middlewareLocation+":61613", "topic://UnityAgentControl", "topic://UnityAgentFeedback", "admin", "password", true);
+            middleware = GetComponent<Middleware>();
+            if (middleware != null) middleware.Register(this);
         }
 
         void Update() {
-            ReadMessages();
-            HandleRequests();
-
             if (Time.time > nextWorldUpdate) {
                 UpdateWorld();
             }
@@ -36,6 +33,7 @@ namespace ASAP {
 
         void UpdateWorld() {
             nextWorldUpdate = Time.time + 1.0f / worldUpdateFrequency;
+            //if (worldObjects.Count == 0) return;
 
             ObjectUpdate[] objectUpdates = new ObjectUpdate[worldObjects.Count];
             int objectIdx = 0;
@@ -47,7 +45,7 @@ namespace ASAP {
                 objectIdx++;
             }
 
-            middleware.SendMessage(JsonUtility.ToJson(new WorldObjectUpdate {
+            middleware.Send(JsonUtility.ToJson(new WorldObjectUpdate {
                 msgType = AUPROT.MSGTYPE_WORLDOBJECTUPDATE,
                 nObjects = worldObjects.Count,
                 objects = objectUpdates
@@ -55,6 +53,7 @@ namespace ASAP {
         }
 
         void LateUpdate() {
+            // TODO: Maybe it is preferable behavior only set new agent states once?
             foreach (string id in agents.Keys) {
                 if (agents[id].agentState != null) {
                     agents[id].ApplyAgentState();
@@ -63,14 +62,15 @@ namespace ASAP {
         }
 
         // Maybe parsing/etc. could be done in the communication thread better?
-        void ReadMessages() {
-            string rawMsg = middleware.ReadMessage(); // Raw JSON string from middleware
-            if (rawMsg.Length == 0) return; // will return "" if there is nothing new
-            //Debug.Log("Raw: "+rawMsg);
+        public void OnMessage(string rawMsg) {
+            AsapMessage asapMessage;
 
-            // Try to parse properties "msgType" & "agentId" if in message
-            AsapMessage asapMessage = JsonUtility.FromJson<AsapMessage>(rawMsg);
-
+            try {
+                asapMessage = JsonUtility.FromJson<AsapMessage>(rawMsg);
+            } catch (Exception e) {
+                Debug.LogWarning("Failed to parse incomming msg to JSON: " + rawMsg + "\n\n" + e);
+                return;
+            }
 
             switch (asapMessage.msgType) {
                 case AUPROT.MSGTYPE_AGENTSPECREQUEST: // AgentSpecRequest type msg comming from ASAP
@@ -91,20 +91,21 @@ namespace ASAP {
                         JsonUtility.FromJsonOverwrite(rawMsg, agents[asapMessage.agentId].agentState);
 
                         if (agents[asapMessage.agentId].agentState.binaryBoneValues.Length > 0) {
-                            Debug.LogWarning("Parsing binaryBoneValues untested");
                             byte[] binaryMessage = System.Convert.FromBase64String(
                                 agents[asapMessage.agentId].agentState.binaryBoneValues);
+                            agents[asapMessage.agentId].agentState.boneTranslations =
+                                new BoneTranslation[2];
                             agents[asapMessage.agentId].agentState.boneValues =
-                                new BoneTransform[agents[asapMessage.agentId].agentState.nBones];
+                                new BoneLocalRotation[agents[asapMessage.agentId].agentState.nBones];
                             using (BinaryReader br = new BinaryReader(new MemoryStream(binaryMessage))) {
                                 for (int b = 0; b < agents[asapMessage.agentId].agentState.nBones; b++) {
-                                    agents[asapMessage.agentId].agentState.boneValues[b] = new BoneTransform(br);
+                                    if (b < 2) agents[asapMessage.agentId].agentState.boneTranslations[b] = new BoneTranslation(br);
+                                    agents[asapMessage.agentId].agentState.boneValues[b] = new BoneLocalRotation(br);
                                 }
                             }
                         }
 
                         if (agents[asapMessage.agentId].agentState.binaryFaceTargetValues.Length > 0) {
-                            Debug.LogWarning("Parsing binaryFaceTargetValues untested");
                             byte[] binaryMessage = System.Convert.FromBase64String(
                                 agents[asapMessage.agentId].agentState.binaryFaceTargetValues);
                             agents[asapMessage.agentId].agentState.faceTargetValues =
@@ -123,6 +124,8 @@ namespace ASAP {
                 default:
                     break;
             }
+
+            HandleRequests();
         }
 
         void HandleRequests() {
@@ -134,7 +137,7 @@ namespace ASAP {
                 }
 
                 if (kv.Value.source == "/scene") {
-                    middleware.SendMessage(JsonUtility.ToJson(agents[kv.Key].agentSpec));
+                    middleware.Send(JsonUtility.ToJson(agents[kv.Key].agentSpec));
                     Debug.Log("Sent agent spec for id=" + kv.Key);
                 } else {
                     Debug.LogWarning("Initializing agents only possible from /scene!");
@@ -159,11 +162,7 @@ namespace ASAP {
                 worldObjects.Add(worldObject.id, worldObject);
             }
         }
-
-        void OnApplicationQuit() {
-            middleware.Close();
-        }
-
+        
     }
 
 }

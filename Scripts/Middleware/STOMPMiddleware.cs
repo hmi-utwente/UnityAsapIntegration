@@ -1,17 +1,24 @@
-﻿using Apache.NMS;
+﻿#if !UNITY_EDITOR && UNITY_METRO
+#else
+using Apache.NMS;
 using Apache.NMS.Util;
 using Apache.NMS.Stomp;
+#endif
+
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-public class STOMPMiddleware : IMiddleware {
+public class STOMPMiddleware : Middleware {
 
+#if !UNITY_EDITOR && UNITY_METRO
+    // TODO: UWP implementation of STOMP
+#else
     public string topicRead;
     public string topicWrite;
     public string address;
-    private string user;
-    private string pass;
+    public string user;
+    public string pass;
 
     //bool durable;
     bool onlyLast;
@@ -21,48 +28,22 @@ public class STOMPMiddleware : IMiddleware {
     IConnection connection;
     Thread apolloWriterThread;
     Thread apolloReaderThread;
-
     AutoResetEvent semaphore = new AutoResetEvent(false);
     System.TimeSpan receiveTimeout = System.TimeSpan.FromMilliseconds(250);
+#endif
 
-    Queue<string> readMessageQueue;
-    private object _readMessageQueueLock = new object();
-
-    Queue<string> writeMessageQueue;
-    private object _writeMessageQueueLock = new object();
-
-    public STOMPMiddleware(string address, string topicRead, string topicWrite, string user, string pass, bool onlyLast) {
-        this.topicRead = topicRead;
-        this.topicWrite = topicWrite;
-        this.address = address;
-        this.user = user;
-        this.pass = pass;
-        this.onlyLast = onlyLast;
-
-        readMessageQueue = new Queue<string>();
-        writeMessageQueue = new Queue<string>();
-
+    public void Awake() {
+#if !UNITY_EDITOR && UNITY_METRO
+        throw new System.NotImplementedException();
+#else
         STOMPStart();
+#endif
     }
 
-    public void SendMessage(string msg) {
-        lock (_writeMessageQueueLock) {
-            writeMessageQueue.Enqueue(msg);
-        }
-    }
-
-    public string ReadMessage() {
-        if (readMessageQueue.Count > 0) {
-            while (onlyLast && readMessageQueue.Count > 1) readMessageQueue.Dequeue();
-            lock (_readMessageQueueLock) {
-                return readMessageQueue.Dequeue();
-            }
-        } else {
-            return "";
-        }
-    }
-
-    public void Close() {
+    public void OnApplicationQuit() {
+#if !UNITY_EDITOR && UNITY_METRO
+        throw new System.NotImplementedException();
+#else
         networkOpen = false;
         if (apolloWriterThread != null && !apolloWriterThread.Join(500)) {
             Debug.LogWarning("Could not close apolloWriterThread");
@@ -74,12 +55,16 @@ public class STOMPMiddleware : IMiddleware {
             apolloWriterThread.Abort();
         }
         if (connection != null) connection.Close();
+#endif
     }
 
     void STOMPStart() {
+#if !UNITY_EDITOR && UNITY_METRO
+        throw new System.NotImplementedException();
+#else
         try {
-            System.Uri connecturi = new System.Uri("stomp:"+address);
-            Debug.Log("Apollo connecting to " + connecturi+ " ("+ address+")");
+            System.Uri connecturi = new System.Uri("stomp:" + address);
+            Debug.Log("Apollo connecting to " + connecturi + " (" + address + ")");
             factory = new NMSConnectionFactory(connecturi);
             // NOTE: ensure the nmsprovider-activemq.config file exists in the executable folder.
             connection = factory.CreateConnection(user, pass);
@@ -95,34 +80,39 @@ public class STOMPMiddleware : IMiddleware {
 
         apolloReaderThread = new Thread(new ThreadStart(ApolloReader));
         apolloReaderThread.Start();
+#endif
     }
 
     void ApolloWriter() {
+#if !UNITY_EDITOR && UNITY_METRO
+        throw new System.NotImplementedException();
+#else
         try {
             IDestination destination_Write = SessionUtil.GetDestination(session, topicWrite);
             IMessageProducer producer = session.CreateProducer(destination_Write);
             producer.DeliveryMode = MsgDeliveryMode.NonPersistent;
             producer.RequestTimeout = receiveTimeout;
             while (networkOpen) {
-                if (writeMessageQueue.Count > 0) {
-                    string msg;
-                    lock (_writeMessageQueueLock) {
-                        msg = writeMessageQueue.Dequeue();
-                    }
-                    try {
-                        if (msg.Length > 0) producer.Send(session.CreateTextMessage(msg));
-                    } catch (RequestTimedOutException rte) {
-                        Debug.Log("Timeout " + rte);
-                        continue;
+               string msg = "";
+               lock (_sendQueueLock) {
+                    if (_sendQueue.Count > 0) {
+                        msg = _sendQueue.Dequeue();
                     }
                 }
-            }
+
+                if (msg != null && msg.Length > 0)
+                        producer.Send(session.CreateTextMessage(msg));
+                }
         } catch (System.Exception e) {
             Debug.Log("ApolloWriter Exception " + e);
         }
+#endif
     }
 
     void ApolloReader() {
+#if !UNITY_EDITOR && UNITY_METRO
+        throw new System.NotImplementedException();
+#else
         try {
             //IDestination destination_Read = SessionUtil.GetDestination(session, topicRead);
             //destination_Read
@@ -136,20 +126,24 @@ public class STOMPMiddleware : IMiddleware {
             } else {
                 consumer = session.CreateDurableConsumer(destination_Read, "test", null, false);
             }*/
-            consumer.Listener += new MessageListener(OnMessage);
+            consumer.Listener += new MessageListener(OnSTOMPMessage);
             while (networkOpen) {
-                semaphore.WaitOne((int) receiveTimeout.TotalMilliseconds, true);
+                semaphore.WaitOne((int)receiveTimeout.TotalMilliseconds, true);
             }
         } catch (System.Exception e) {
             Debug.Log("ApolloReader Exception " + e);
         }
+#endif
     }
 
-    void OnMessage(IMessage receivedMsg) {
-        lock (_readMessageQueueLock) {
-            readMessageQueue.Enqueue((receivedMsg as ITextMessage).Text);
+#if !UNITY_EDITOR && UNITY_METRO
+#else
+    void OnSTOMPMessage(IMessage receivedMsg) {
+        lock (_receiveQueueLock) {
+            _receiveQueue.Enqueue((receivedMsg as ITextMessage).Text);
         }
         semaphore.Set();
     }
+#endif
 
 }

@@ -48,6 +48,8 @@ namespace UnityAsapIntegration.ASAP {
                 if (SyncPointProgressEventHandler != null) SyncPointProgressEventHandler.Invoke(syncPointProgress);
             } else if (feedback.StartsWith("<warningFeedback")) {
                 WarningFeedback warningFeedback = ParseFeedbackBlock<WarningFeedback>(feedback);
+                warningFeedback.raw = HtmlDecode(feedback);
+                if (WarningFeedbackEventHandler != null) WarningFeedbackEventHandler.Invoke(warningFeedback);
             }
         }
 

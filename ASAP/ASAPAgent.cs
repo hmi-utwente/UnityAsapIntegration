@@ -8,6 +8,7 @@ namespace UnityAsapIntegration.ASAP {
         public bool debug;
         public AgentSpec agentSpec;
         public AgentState agentState;
+        public AgentState manualAgentState;
         public Transform canonicalSkeletonRefRoot;
 
         public bool manualAnimation;
@@ -117,12 +118,17 @@ namespace UnityAsapIntegration.ASAP {
         }
 
         public virtual void ApplyAgentState() {
-            for (int b = 0; b < agentState.boneValues.Length; b++) {
+            
+            AgentState _agentState;
+            if (manualAnimation) _agentState = manualAgentState;
+            else _agentState = agentState;
+            
+            for (int b = 0; b < _agentState.boneValues.Length; b++) {
                 Quaternion newRotation = new Quaternion(
-                    -agentState.boneValues[b].r[0], // Same with order and sign of quat values
-                     agentState.boneValues[b].r[1],
-                     agentState.boneValues[b].r[2],
-                    -agentState.boneValues[b].r[3]);
+                    -_agentState.boneValues[b].r[0], // Same with order and sign of quat values
+                    _agentState.boneValues[b].r[1],
+                    _agentState.boneValues[b].r[2],
+                    -_agentState.boneValues[b].r[3]);
                 bones[b].localRotation = qInit[b] * RGi[b] * newRotation * RG[b];
             }
 

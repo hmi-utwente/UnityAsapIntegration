@@ -9,16 +9,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1e1e5df503503467e9ffe4ef97e3e1e7, type: 3}
-  m_Name: DefaultBML
+  m_Name: Wave
   m_EditorClassIdentifier: 
   bmls:
   - "<bml id=\"bml8\" characterId=\"UMA_F\" xmlns=\"http://www.bml-initiative.org/bml/bml-1.0\"
     \n  xmlns:bmlt=\"http://hmi.ewi.utwente.nl/bmlt\">\n  <speech id=\"s1\" start=\"1\">\n
     \   <text>Hello there test.<sync id=\"snc1\" /> I can talk with you.</text>\n
     \ </speech>\n  <gesture id=\"g1\" lexeme=\"wave\" start=\"s1:start+1\" stroke=\"s1:snc1+2\"
-    />\n</bml>"
-  - "<bml id=\"bml9\" characterId=\"UMA_F\" xmlns=\"http://www.bml-initiative.org/bml/bml-1.0\"
-    \n  xmlns:bmlt=\"http://hmi.ewi.utwente.nl/bmlt\">\n  <speech id=\"s1\" start=\"bml8:s1:end+1\">\n
-    \   <text>Hello there test.<sync id=\"snc1\" /> I can talk with you.</text>\n
-    \ </speech>\n  <gesture id=\"g3\" lexeme=\"wave\" start=\"s1:start+1\" stroke=\"s1:snc1+2\"
     />\n</bml>"

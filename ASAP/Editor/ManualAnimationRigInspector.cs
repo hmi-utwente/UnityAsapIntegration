@@ -64,6 +64,7 @@ namespace UnityAsapIntegration.ASAP.Editor {
         public override void OnInspectorGUI() {
             if (animationRig == null || animation == null) return;
             animationRig.ManualAnimation = GUILayout.Toggle(animationRig.ManualAnimation, "ManualAnimation", GUILayout.Width(130));
+            animationRig.skipHumanoidRoot = GUILayout.Toggle(animationRig.skipHumanoidRoot, "SkipHumanoidRoot", GUILayout.Width(130));
             int newCurrentClipIndex = EditorGUILayout.Popup(currentClipIndex, (from clip in animationClips select clip.name).ToArray());
             if (newCurrentClipIndex != currentClipIndex || animation.clip == null) {
                 foreach (AnimationClip clip in animationClips) {
@@ -157,7 +158,6 @@ namespace UnityAsapIntegration.ASAP.Editor {
 
             // if root has translation: we use T1R
             if (animatedBones.ContainsKey("HumanoidRoot") && animatedBones["HumanoidRoot"]) {
-                Debug.Log("=============");
                 encoding = "T1R";
                 // Could also use "TR" if there is a non-root bone with translation...
                 // but we don't support those non-root translations in animations atm anyway...

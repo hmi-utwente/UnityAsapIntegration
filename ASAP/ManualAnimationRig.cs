@@ -22,6 +22,8 @@ namespace UnityAsapIntegration.ASAP {
             }
         }
 
+        public bool skipHumanoidRoot = false;
+
         public ASAPAgent controlledAgent;
         public Transform vjointRoot;
         public Dictionary<string, Transform> hAnimLUT;
@@ -51,6 +53,11 @@ namespace UnityAsapIntegration.ASAP {
                 int boneIdx = 0;
                 foreach (BoneSpec boneSpec in controlledAgent.agentSpec.bones) {
                     if (hAnimLUT.ContainsKey(boneSpec.hAnimName)) {
+                        if (skipHumanoidRoot && boneSpec.hAnimName == HAnimMapping.HumanoidRoot && controlledAgent.agentState != null) {
+                            boneValues.Add(controlledAgent.agentState.boneValues[boneIdx]);
+                            boneTranslations.Add(controlledAgent.agentState.boneTranslations[boneIdx]);
+                            continue;
+                        }
                         boneValues.Add(new BoneLocalRotation(hAnimLUT[boneSpec.hAnimName]));
                         if (boneIdx < 2) boneTranslations.Add(new BoneTranslation(hAnimLUT[boneSpec.hAnimName]));
                     } else Debug.LogError("Could not find bone from spec in animationRig: " + boneSpec.hAnimName);
@@ -58,10 +65,10 @@ namespace UnityAsapIntegration.ASAP {
                     boneIdx++;
                 }
 
-                if (controlledAgent.agentState == null) controlledAgent.agentState = new AgentState();
+                if (controlledAgent.manualAgentState == null) controlledAgent.manualAgentState = new AgentState();
 
-                controlledAgent.agentState.boneTranslations = boneTranslations.ToArray();
-                controlledAgent.agentState.boneValues = boneValues.ToArray();
+                controlledAgent.manualAgentState.boneTranslations = boneTranslations.ToArray();
+                controlledAgent.manualAgentState.boneValues = boneValues.ToArray();
             }
         }
 

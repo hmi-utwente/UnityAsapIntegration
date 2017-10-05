@@ -7,8 +7,8 @@ using UMA;
 
 namespace UnityAsapIntegration.ASAP.UMA {
     public class ExpressionTargetEditor : MonoBehaviour {
-
-        public static string folder = "UnityAsapIntegration/Resources/DefaultUMAFaceTargets";
+        public static string projectFolder = "UnityAsapIntegration/Resources/DefaultUMAFaceTargets";
+        public static string resourcesFolder = "DefaultUMAFaceTargets";
 
         public ExpressionPlayer ep;
         public static string INDEX_FILE = "__INDEX";
@@ -82,8 +82,11 @@ namespace UnityAsapIntegration.ASAP.UMA {
             string[] lines;
             List<string> targetNames = new List<string>();
             List<string> targetDescriptions = new List<string>();
+            
 
-#if (!UNITY_EDITOR && UNITY_ANDROID)
+            
+#if (!UNITY_EDITOR && (UNITY_ANDROID || UNITY_STANDALONE_OSX))
+            /*
             string indexFile = System.IO.Path.Combine(System.IO.Path.Combine(Application.streamingAssetsPath, "DefaultUMAFaceTargets"), "__INDEX.txt");
             WWW www = new WWW(indexFile);
             while (!www.isDone) { }
@@ -96,12 +99,22 @@ namespace UnityAsapIntegration.ASAP.UMA {
                         targetDescriptions.Add(elems[1]);
                     }
                 }
+            }*/
+            TextAsset indexFile = Resources.Load(resourcesFolder+"/__INDEX") as TextAsset;
+            if (indexFile != null) {
+                lines = indexFile.text.Split(new string[] { "\n", "\r\n" }, System.StringSplitOptions.RemoveEmptyEntries);
+                foreach (string line in lines) {
+                    string[] elems = line.Split(new char[] { ' ' }, 2);
+                    if (elems.Length >= 2) {
+                        targetNames.Add(elems[0]);
+                        targetDescriptions.Add(elems[1]);
+                    }
+                }
             }
 #else
             string path = GetFileName(INDEX_FILE);
             if (System.IO.File.Exists(path)) {
                 lines = System.IO.File.ReadAllLines(path);
-
                 foreach (string line in lines) {
                     string[] elems = line.Split(new char[] {' '}, 2);
                     targetNames.Add(elems[0]);
@@ -127,21 +140,26 @@ namespace UnityAsapIntegration.ASAP.UMA {
         }
 
         public static string GetFileName(string name) {
-            return Application.dataPath + "/" + folder + "/" + name + ".txt";
+            return Application.dataPath + "/" + projectFolder + "/" + name + ".txt";
         }
 
         public static ExpressionControlMapping LoadMapping(string name) {
             string[] lines;
-
-#if (!UNITY_EDITOR && UNITY_ANDROID)
+#if (!UNITY_EDITOR && (UNITY_ANDROID || UNITY_STANDALONE_OSX))
+            /*
             string mappingFile = System.IO.Path.Combine(System.IO.Path.Combine(Application.streamingAssetsPath, "DefaultUMAFaceTargets"), name + ".txt");
             WWW www = new WWW(mappingFile);
             while (!www.isDone) { }
-            if (!string.IsNullOrEmpty(www.text))
-            {
+            if (!string.IsNullOrEmpty(www.text)) {
                 lines = www.text.Split(new string[] { "\n", "\r\n" }, System.StringSplitOptions.RemoveEmptyEntries);
-            } else
-            {
+            } else {
+                lines = new string[] { };
+            } */
+
+            TextAsset indexFile = Resources.Load(resourcesFolder+"/"+name) as TextAsset;
+            if (indexFile != null) {
+                lines = indexFile.text.Split(new string[] { "\n", "\r\n" }, System.StringSplitOptions.RemoveEmptyEntries);
+            } else {
                 lines = new string[] { };
             }
 #else

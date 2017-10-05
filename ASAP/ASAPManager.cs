@@ -84,7 +84,7 @@ namespace UnityAsapIntegration.ASAP {
                     }
                     break;
                 case AUPROT.MSGTYPE_AGENTSTATE:
-                    if (!agents.ContainsKey(asapMessage.agentId) || agents[asapMessage.agentId].manualAnimation) break;
+                    if (!agents.ContainsKey(asapMessage.agentId)) break;
                     if (agents.ContainsKey(asapMessage.agentId)) {
                         if (agents[asapMessage.agentId].agentState == null)
                             agents[asapMessage.agentId].agentState = new AgentState();

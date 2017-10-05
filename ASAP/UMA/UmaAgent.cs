@@ -151,25 +151,30 @@ namespace UnityAsapIntegration.ASAP.UMA {
 
         public override void ApplyAgentState() {
             //Debug.Log("Would Set AGent Sate...");
-            for (int b = 0; b < agentState.boneValues.Length; b++) {
+
+            AgentState _agentState;
+            if (manualAnimation && manualAgentState != null) _agentState = manualAgentState;
+            else _agentState = agentState;
+            
+            for (int b = 0; b < _agentState.boneValues.Length; b++) {
                 //bones[b].localPosition = agentState.positions[b];
                 //bones[b].localRotation = agentState.rotations[b];
                 Vector3 newPosition = Vector3.zero;
                 if (b < 2) {
                     newPosition = new Vector3(
-                        -agentState.boneTranslations[b].t[0], // Minus x value b/c of different COS in ASAP
-                         agentState.boneTranslations[b].t[1],
-                         agentState.boneTranslations[b].t[2]);
+                        -_agentState.boneTranslations[b].t[0], // Minus x value b/c of different COS in ASAP
+                        _agentState.boneTranslations[b].t[1],
+                        _agentState.boneTranslations[b].t[2]);
                 }
                 Quaternion newRotation = new Quaternion(
-                    -agentState.boneValues[b].r[0], // Same with order and sign of quat values
-                     agentState.boneValues[b].r[1],
-                     agentState.boneValues[b].r[2],
-                    -agentState.boneValues[b].r[3]);
+                    -_agentState.boneValues[b].r[0], // Same with order and sign of quat values
+                    _agentState.boneValues[b].r[1],
+                    _agentState.boneValues[b].r[2],
+                    -_agentState.boneValues[b].r[3]);
                 if (b == 0) {
                     Quaternion newRot = qInit[b] * RGi[b] * newRotation * RG[b];
-                    positionBone.position = new Vector3(newPosition.x, 0.0f, newPosition.z) * positionBone.localScale.x;
-                    bones[b].localPosition = new Vector3(-newPosition.y, 0.0f, 0.0f); //* positionBone.localScale.x;
+                    positionBone.position = new Vector3(newPosition.x, 0.0f, newPosition.z);// * (1/positionBone.localScale.x);
+                    bones[b].localPosition = new Vector3(-newPosition.y, 0.0f, 0.0f) * (1/positionBone.localScale.x);
                     positionBone.localRotation = Quaternion.Euler(newRot.eulerAngles.x, 0.0f, 0.0f);
                     bones[b].localRotation =  Quaternion.Inverse(positionBone.localRotation) * newRot;
                 } else if (b == 1) {

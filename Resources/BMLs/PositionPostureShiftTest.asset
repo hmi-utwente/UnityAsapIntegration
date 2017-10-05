@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1e1e5df503503467e9ffe4ef97e3e1e7, type: 3}
-  m_Name: PostureShifts
+  m_Name: PositionPostureShiftTest
   m_EditorClassIdentifier: 
   bmls:
   - "<bml id=\"bml2\" characterId=\"UMA_F\" xmlns=\"http://www.bml-initiative.org/bml/bml-1.0\"

@@ -22,7 +22,6 @@ using System.Net.Sockets;
 public class UDPMultiClientMiddleware : Middleware {
     public string _remoteIP = "127.0.0.1";
     public int _dataPort = 6652;
-    
     private bool _listening = false;
     private bool _running = true;
 

@@ -128,8 +128,8 @@ namespace UnityAsapIntegration.ASAP.Editor {
 					break;
 				}
 				GUILayout.EndHorizontal();
-
 			}
+
 			EditorGUILayout.EndScrollView();
 
 			GUILayout.EndVertical();

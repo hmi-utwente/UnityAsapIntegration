@@ -8,7 +8,7 @@ namespace UnityAsapIntegration.ASAP {
     // that can be used on the ASAP side for Restposes, procedural animation, etc...
     public class ManualAnimationRig : MonoBehaviour {
 
-        public enum ExportMode { ProcAnimationGesture, Keyframes, RestPose, GestureBinding };
+        public enum ExportMode { ProcAnimationGesture, Keyframes, GestureBindingRestPose, GestureBindingKeyFrames, GestureBindingProcAnim };
 
         public bool ManualAnimation {
             get {

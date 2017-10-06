@@ -41,7 +41,6 @@ namespace UnityAsapIntegration.ASAP.Editor {
 		
 		[MenuItem("ASAP/BML Feedback Viewer")]
 		static void Init() {
-			Debug.Log("INIT");
 			w = GetWindow<BMLFeedbackViewer>(false, "BML Feedback", true);
 			w.Show();
 			w.Register();

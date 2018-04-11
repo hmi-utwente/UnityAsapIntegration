@@ -35,6 +35,7 @@ namespace UnityAsapIntegration.ASAP.UMA {
 
             GUILayout.BeginHorizontal();
             GUILayout.BeginVertical();
+            editor.writeValues = GUILayout.Toggle(editor.writeValues, "Write?");
             int currentSelected = EditorGUILayout.Popup(editor.currentlyEditing, ExpressionTargetEditor.ExpressionTargets);
             EditorGUILayout.HelpBox(ExpressionTargetEditor.ExpressionTargetDescriptions[editor.currentlyEditing], UnityEditor.MessageType.Info);
             GUILayout.BeginHorizontal();

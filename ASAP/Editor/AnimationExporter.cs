@@ -148,21 +148,22 @@ namespace UnityAsapIntegration.ASAP.Editor {
 			
 			if (results.Count > 0) {
 				output = results.ToArray();
+                GUI.skin.textArea.wordWrap = false;
+
+                for (int i = 0; i < output.Length; i++) {
+                    GUILayout.BeginHorizontal();
+                    string render = output[i];
+                    if (render.Length > maxOutputLength) {
+                        string msg = "\n\n{{TRUNCATED HERE: TOO LONG FOR UNITY}}";
+                        render = render.Substring(0, maxOutputLength-msg.Length)+msg;
+                    }
+                    GUILayout.TextArea(render, GUILayout.ExpandHeight(true));
+                    GUILayout.EndHorizontal();
+                }
 			}
 
 
-			GUI.skin.textArea.wordWrap = false;
 
-			for (int i = 0; i < output.Length; i++) {
-				GUILayout.BeginHorizontal();
-				string render = output[i];
-				if (render.Length > maxOutputLength) {
-					string msg = "\n\n{{TRUNCATED HERE: TOO LONG FOR UNITY}}";
-					render = render.Substring(0, maxOutputLength-msg.Length)+msg;
-				}
-				GUILayout.TextArea(render, GUILayout.ExpandHeight(true));
-				GUILayout.EndHorizontal();
-			}
 		}
 		
 		void OnSelectionChange() { Register(); Repaint(); }
@@ -170,6 +171,7 @@ namespace UnityAsapIntegration.ASAP.Editor {
 		void OnEnable() { Register(); }
 		
 		void OnFocus() { Register(); }
+
 
 
         // Export animation... current clip?
@@ -345,6 +347,12 @@ namespace UnityAsapIntegration.ASAP.Editor {
                     w.WriteEndElement(); // </ProcAnimation>
                     w.WriteEndElement(); // </bmlt:procanimationgesture>
                 } else if (mode == ManualAnimationRig.ExportMode.GestureBindingRestPose) {
+/*
+<?xml version="1.0"?>
+<SkeletonPose encoding="T1R" rotationEncoding="quaternions" parts="HumanoidRoot vt10 vt6 vt1 vc4 r_sternoclavicular r_shoulder r_elbow r_wrist l_sternoclavicular l_shoulder l_elbow l_wrist l_hip l_knee l_ankle r_hip r_knee r_ankle">
+  0.612 0.446 -0.748 -0.957 0.0 0.289 0.0 -0.998 -0.056 0.0 0.0 0.999 -0.045 -0.014 -0.011 -0.999 -0.052 0.0 0.0 -0.998 0.066 0.0 0.0 -0.972 0.0 0.0 -0.233 -0.842 0.342 -0.092 0.408 -0.883 0.285 0.086 -0.362 -0.719 0.186 -0.669 0.034 -0.972 0.0 0.0 0.233 -0.837 0.375 0.069 -0.393 0.946 -0.303 -0.06 -0.096 0.861 -0.083 -0.48 0.149 0.729 -0.684 0.0 0.0 -0.711 -0.703 0.007 -0.006 0.982 0.038 -0.142 0.117 -0.727 0.686 0.0 0.0 -0.74 -0.672 0.0 0.0 -0.998 0.0 0.0 0.058
+</SkeletonPose>
+ */
                     w.WriteStartElement("SkeletonPose"); // <SkeletonPose ...>
                     w.WriteAttributeString("encoding", encoding); // ... encoding=""
                     w.WriteAttributeString("rotationEncoding", rotationEncoding);

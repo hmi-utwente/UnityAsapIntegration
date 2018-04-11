@@ -49,10 +49,6 @@ namespace UnityAsapIntegration.ASAP.UMA {
             animator = GetComponent<Animator>();
         }
 
-        void Update() {
-            ep.SetValues(expressionControlValues);
-        }
-
         void Start() {
             if (animator != null) {
                 poseHandler = new HumanPoseHandler(animator.avatar, transform);
@@ -236,11 +232,13 @@ namespace UnityAsapIntegration.ASAP.UMA {
                     ExpressionPlayerFaceTarget epft = ((ExpressionPlayerFaceTarget)agentSpec.faceTargetsControls[f]);
                     for (int c = 0; c < epft.expressionControlMapping.indexes.Length; c++) {
                         int idx = epft.expressionControlMapping.indexes[c];
-                        expressionControlValues[idx] += epft.expressionControlMapping.values[c] * agentState.faceTargetValues[f];
-                        // TODO: Average/dampen/....
+                        expressionControlValues[idx] = epft.expressionControlMapping.values[c] * agentState.faceTargetValues[f];
                     }
                 }
             }
+            
+            ep.Values = expressionControlValues;
+            ep.SetValues();
 
         }
     }

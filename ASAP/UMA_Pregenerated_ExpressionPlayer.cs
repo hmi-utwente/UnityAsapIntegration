@@ -14,40 +14,94 @@ public class UMA_Pregenerated_ExpressionPlayer : ExpressionPlayer {
 	public Transform skeletonRoot;
 	protected UMASkeleton skeleton;
 
+	private int jawHash = 0;
+	private int neckHash = 0;
+	private int headHash = 0;
+	Animator animator;
+	bool initialized = false;
+
 	public void SetValues(float[] values) {
 		Values = values; // Overrides gui sliders
 		SetValues();
 	}
 
 	void OnRenderObject() {
-		if (expressionSet == null) return;
-		if (skeletonRoot == null) return;
-		if (skeleton == null) return;
+		if (!initialized) return;
+
+		// Fix for animation systems which require consistent values frame to frame
+		Quaternion headRotation = skeleton.GetRotation(headHash);
+		Quaternion neckRotation = skeleton.GetRotation(neckHash);
+
+		// Need to reset bones here if we want Mecanim animation
 		expressionSet.RestoreBones(skeleton);
+
+		if (!overrideMecanimNeck)
+			skeleton.SetRotation(neckHash, neckRotation);
+		if (!overrideMecanimHead)
+			skeleton.SetRotation(headHash, headRotation);
 	}
 
+	void LateUpdate() {
+		if (!initialized) return;
+
+		if (!Application.isPlaying) SetValues();
+	}
+	
+
 	void Update() {
-		if (skeletonRoot == null) return;
-		if (skeleton == null) {
-			skeleton = new UMASkeleton(skeletonRoot);
+
+		if (!initialized) {
+			Initialize();
+			return;
 		}
 
 		if (!Application.isPlaying) SetValues();
 	}
 
+	public void Initialize() {
+		blinkDelay = Random.Range(minBlinkDelay, maxBlinkDelay);
+		if (skeletonRoot == null) return;
+		animator = GetComponent<Animator>();
+		
+		if (skeleton == null) {
+			skeleton = new UMASkeleton(skeletonRoot);
+		}
+
+		if (animator != null && expressionSet != null && skeleton != null) {
+			Transform jaw = animator.GetBoneTransform(HumanBodyBones.Jaw);
+			if (jaw != null)
+				jawHash = UMAUtils.StringToHash(jaw.name);
+
+			Transform neck = animator.GetBoneTransform(HumanBodyBones.Neck);
+			if (neck != null)
+				neckHash = UMAUtils.StringToHash(neck.name);
+
+			Transform head = animator.GetBoneTransform(HumanBodyBones.Head);
+			if (head != null)
+				headHash = UMAUtils.StringToHash(head.name);
+			initialized = true;
+		}
+	}
+
 	public void SetValues() {
 		if (expressionSet == null) return;
 		if (skeleton == null) return;
+		if (!initialized) return;
 
 		float[] values = Values;
+
 
 		MecanimJoint mecanimMask = MecanimJoint.None;
 		if (!overrideMecanimNeck)
 			mecanimMask |= MecanimJoint.Neck;
 		if (!overrideMecanimHead)
 			mecanimMask |= MecanimJoint.Head;
+		if (!overrideMecanimJaw)
+			mecanimMask |= MecanimJoint.Jaw;
 		if (!overrideMecanimEyes)
 			mecanimMask |= MecanimJoint.Eye;
+		if (overrideMecanimJaw)
+			skeleton.Restore(jawHash);
 
 		for (int i = 0; i < values.Length; i++) {
 			if ((MecanimAlternate[i] & mecanimMask) != MecanimJoint.None) {

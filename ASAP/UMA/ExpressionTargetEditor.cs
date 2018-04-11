@@ -18,6 +18,8 @@ namespace UnityAsapIntegration.ASAP.UMA {
         public static string[] ExpressionTargets;
         public static string[] ExpressionTargetDescriptions;
 
+        public bool writeValues = false;
+
         public int currentlyEditing;
 
         void Awake() {
@@ -43,7 +45,7 @@ namespace UnityAsapIntegration.ASAP.UMA {
                     currentTargetValues[i] = 0.0f;
                 }
             }
-            ep.Values = currentTargetValues;
+            if (writeValues) ep.Values = currentTargetValues;
         }
 
         public void Rename(string newName) {

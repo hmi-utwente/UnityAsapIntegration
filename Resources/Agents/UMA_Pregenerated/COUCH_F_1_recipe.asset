@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9448878e2e40f1a4c9f8fd2b56832b13, type: 3}
+  m_Name: COUCH_F_1_recipe
+  m_EditorClassIdentifier: 
+  recipeType: Standard
+  DisplayValue: 
+  compatibleRaces: []
+  wardrobeRecipeThumbs: []
+  wardrobeSlot: None
+  Hides: []
+  suppressWardrobeSlots: []
+  activeWardrobeSet: []
+  MeshHideAssets: []
+  recipeString: '{"version":3,"packedSlotDataList":[],"slotsV2":[],"slotsV3":[{"id":"FemaleFace","scale":100,"copyIdx":-1,"overlays":[{"id":"F_H_Head_uma","colorIdx":0,"rect":[0,0,0,0]},{"id":"F_Face
+    PBR 2","colorIdx":0,"rect":[0,0,0,0]},{"id":"F_Elf lipstick PBR","colorIdx":12,"rect":[0,0,0,0]},{"id":"F_Face
+    PBR 2_eyebrow","colorIdx":1,"rect":[0,0,0,0]}]},{"id":"FemaleHands","scale":100,"copyIdx":-1,"overlays":[{"id":"F_H_bod_uma","colorIdx":0,"rect":[0,0,0,0]},{"id":"NewFemaleUnderwear_PBR_uma","colorIdx":7,"rect":[0,0,0,0]}]},{"id":"FR_High_FemaleInnerMouth","scale":100,"copyIdx":-1,"overlays":[{"id":"InnerMouth_uma","colorIdx":3,"rect":[0,0,0,0]}]},{"id":"FR_High_FemaleEyes","scale":100,"copyIdx":-1,"overlays":[{"id":"Eye
+    Overlay","colorIdx":13,"rect":[0,0,0,0]},{"id":"Default Eye Adjust","colorIdx":2,"rect":[0,0,0,0]}]},{"id":"","scale":1,"copyIdx":-1,"overlays":[]},{"id":"F_Hair
+    9","scale":100,"copyIdx":-1,"overlays":[{"id":"Hair_Default","colorIdx":1,"rect":[0,0,0,0]}]},{"id":"FemaleEyelashfix","scale":100,"copyIdx":-1,"overlays":[{"id":"FemaleEyelash","colorIdx":1,"rect":[0,0,0,0]}]},{"id":"F_Sci
+    jacket 1","scale":100,"copyIdx":-1,"overlays":[{"id":"Outift 4 Jacket Overlay","colorIdx":5,"rect":[0,0,0,0]},{"id":"Color
+    Outift 4 Jacket Overlay","colorIdx":6,"rect":[0,0,0,0]}]},{"id":"F_Sci torso shirt
+    1","scale":100,"copyIdx":-1,"overlays":[{"id":"Sci Shirt 1 overlay","colorIdx":3,"rect":[0,0,0,0]},{"id":"Color
+    shirt 1","colorIdx":4,"rect":[0,0,0,0]}]},{"id":"F_Fingernails","scale":100,"copyIdx":-1,"overlays":[{"id":"F_Fingernails_Overlay","colorIdx":13,"rect":[0,0,0,0]}]},{"id":"F_Sci
+    pants 1","scale":100,"copyIdx":-1,"overlays":[{"id":"Sci Pants 1 overlay","colorIdx":7,"rect":[0,0,0,0]}]},{"id":"F_Sci
+    boots 1","scale":100,"copyIdx":10,"overlays":[]},{"id":"","scale":1,"copyIdx":-1,"overlays":[]},{"id":"","scale":1,"copyIdx":-1,"overlays":[]},{"id":"","scale":1,"copyIdx":-1,"overlays":[]}],"colors":[],"fColors":[{"name":"Skin","colors":[238,214,211,255,0,0,0,0,255,255,255,255,0,0,0,0,255,255,255,255,28,14,14,50]},{"name":"Hair","colors":[4,1,19,255,0,0,0,0,255,255,255,255,0,0,0,0,255,255,255,255,0,0,0,0]},{"name":"Eyes","colors":[73,104,255,255,0,0,0,0,255,255,255,255,0,0,0,0,255,255,255,255,34,31,31,154]},{"name":"ClothesChest1","colors":[255,255,255,255,0,0,0,0,255,255,255,255,0,0,0,0,255,255,255,255,29,29,29,93]},{"name":"ClothesChest2","colors":[255,255,255,255,0,0,0,0,255,255,255,255,0,0,0,0,255,255,255,255,29,29,29,93]},{"name":"ClothesJacket1","colors":[127,178,92,255,0,0,0,0,255,255,255,255,0,0,0,0,255,255,255,255,0,0,0,0]},{"name":"ClothesJacket2","colors":[255,255,255,255,0,0,0,0,255,255,255,255,0,0,0,0,255,255,255,255,29,29,29,93]},{"name":"ClothesLegs1","colors":[56,30,8,255,0,0,0,0,255,255,255,255,0,0,0,0,255,255,255,255,0,0,0,0]},{"name":"ClothesLegs2","colors":[127,178,92,255,0,0,0,0,255,255,255,255,0,0,0,0,255,255,255,255,0,0,0,0]},{"name":"ClothesFeet1","colors":[56,30,8,255,0,0,0,0,255,255,255,255,0,0,0,0,255,255,255,255,0,0,0,0]},{"name":"ClothesFeet2","colors":[255,255,255,255,0,0,0,0,255,255,255,255,0,0,0,0,255,255,255,255,0,0,0,0]},{"name":"ClothesHighlight1","colors":[127,178,92,255,0,0,0,0,255,255,255,255,0,0,0,0,255,255,255,255,0,0,0,0]},{"name":"Complexion1","colors":[206,27,27,255,0,0,0,0,255,255,255,255,0,0,0,0,255,255,255,255,204,204,204,129]},{"name":"-","colors":[255,255,255,255,0,0,0,0,255,255,255,255,0,0,0,0,255,255,255,255,0,0,0,0]}],"sharedColorCount":13,"race":"HumanFemaleHMI_PBR","packedDna":[{"dnaType":"DynamicUMADna","dnaTypeHash":1932961400,"packedDna":"{\"bDnaAsset\":{\"instanceID\":13458},\"bDnaAssetName\":\"HumanFemaleDNA
+    1\",\"bDnaSettings\":[{\"name\":\"height\",\"value\":140},{\"name\":\"headSize\",\"value\":134},{\"name\":\"headWidth\",\"value\":131},{\"name\":\"neckThickness\",\"value\":124},{\"name\":\"armLength\",\"value\":140},{\"name\":\"forearmLength\",\"value\":138},{\"name\":\"armWidth\",\"value\":116},{\"name\":\"forearmWidth\",\"value\":110},{\"name\":\"handsSize\",\"value\":115},{\"name\":\"feetSize\",\"value\":128},{\"name\":\"legSeparation\",\"value\":133},{\"name\":\"upperMuscle\",\"value\":116},{\"name\":\"lowerMuscle\",\"value\":137},{\"name\":\"upperWeight\",\"value\":125},{\"name\":\"lowerWeight\",\"value\":122},{\"name\":\"legsSize\",\"value\":128},{\"name\":\"belly\",\"value\":115},{\"name\":\"waist\",\"value\":115},{\"name\":\"gluteusSize\",\"value\":136},{\"name\":\"earsSize\",\"value\":125},{\"name\":\"earsPosition\",\"value\":138},{\"name\":\"earsRotation\",\"value\":121},{\"name\":\"noseSize\",\"value\":126},{\"name\":\"noseCurve\",\"value\":124},{\"name\":\"noseWidth\",\"value\":127},{\"name\":\"noseInclination\",\"value\":121},{\"name\":\"nosePosition\",\"value\":124},{\"name\":\"nosePronounced\",\"value\":127},{\"name\":\"noseFlatten\",\"value\":128},{\"name\":\"chinSize\",\"value\":123},{\"name\":\"chinPronounced\",\"value\":128},{\"name\":\"chinPosition\",\"value\":118},{\"name\":\"mandibleSize\",\"value\":128},{\"name\":\"jawsSize\",\"value\":124},{\"name\":\"jawsPosition\",\"value\":119},{\"name\":\"cheekSize\",\"value\":125},{\"name\":\"cheekPosition\",\"value\":117},{\"name\":\"lowCheekPronounced\",\"value\":115},{\"name\":\"lowCheekPosition\",\"value\":119},{\"name\":\"foreheadSize\",\"value\":139},{\"name\":\"foreheadPosition\",\"value\":140},{\"name\":\"lipsSize\",\"value\":119},{\"name\":\"mouthSize\",\"value\":138},{\"name\":\"eyeRotation\",\"value\":137},{\"name\":\"eyeSize\",\"value\":125},{\"name\":\"breastSize\",\"value\":26},{\"name\":\"breastCleavage\",\"value\":128}]}"}],"wardrobeSet":[],"packedRecipeType":"Standard"}'

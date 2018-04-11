@@ -14,31 +14,31 @@ public class UMA_Pregenerated_ExpressionPlayer : ExpressionPlayer {
 	public Transform skeletonRoot;
 	protected UMASkeleton skeleton;
 
-	private int jawHash = 0;
-	private int neckHash = 0;
-	private int headHash = 0;
+	private int jawHash = -1;
+	private int neckHash = -1;
+	private int headHash = -1;
 	Animator animator;
 	bool initialized = false;
 
-	public void SetValues(float[] values) {
-		Values = values; // Overrides gui sliders
-		SetValues();
-	}
-
 	void OnRenderObject() {
 		if (!initialized) return;
-
+		Quaternion headRotation = new Quaternion();
+		Quaternion neckRotation = new Quaternion();
 		// Fix for animation systems which require consistent values frame to frame
-		Quaternion headRotation = skeleton.GetRotation(headHash);
-		Quaternion neckRotation = skeleton.GetRotation(neckHash);
+		if (headHash >= 0 && neckHash >= 0) {
+			headRotation = skeleton.GetRotation(headHash);
+			neckRotation = skeleton.GetRotation(neckHash);
+		}
 
 		// Need to reset bones here if we want Mecanim animation
 		expressionSet.RestoreBones(skeleton);
-
-		if (!overrideMecanimNeck)
-			skeleton.SetRotation(neckHash, neckRotation);
-		if (!overrideMecanimHead)
-			skeleton.SetRotation(headHash, headRotation);
+		
+		if (headHash >= 0 && neckHash >= 0) {
+			if (!overrideMecanimNeck)
+				skeleton.SetRotation(neckHash, neckRotation);
+			if (!overrideMecanimHead)
+				skeleton.SetRotation(headHash, headRotation);
+		}
 	}
 
 	void LateUpdate() {

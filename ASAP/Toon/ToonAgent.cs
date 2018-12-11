@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using UMA.PoseTools;
-using UMA;
 using System.Collections;
 
 namespace UnityAsapIntegration.ASAP.Toon {

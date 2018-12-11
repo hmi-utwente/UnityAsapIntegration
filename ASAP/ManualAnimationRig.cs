@@ -32,7 +32,9 @@ namespace UnityAsapIntegration.ASAP {
             controlledAgent = agent;
             vjointRoot = root;
             hAnimLUT = lut;
-            transform.localScale = agent.humanoidRoot.parent.localScale;
+            if (agent.humanoidRoot.parent != null) {
+                transform.localScale = agent.humanoidRoot.parent.localScale;
+            }
             // Add controls to each bone...?
         }
 

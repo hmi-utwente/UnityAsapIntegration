@@ -49,8 +49,10 @@ namespace UnityAsapIntegration.ASAP {
             if (animator == null) return;
             HumanBodyBones[] values = HumanBodyBones.GetValues(typeof(HumanBodyBones)) as HumanBodyBones[];
             foreach (HumanBodyBones b in values) {
+                if (b == HumanBodyBones.LastBone) continue;
                 Transform t = animator.GetBoneTransform(b);
-                if (t != null && !HAnimMappingDefaults.ContainsKey(t.name) &&
+                if (t == null) continue;
+                if (!HAnimMappingDefaults.ContainsKey(t.name) &&
                     HAnimMapping.MecanimToHAnimMap.ContainsKey(b)) {
                     HAnimMappingDefaults.Add(t.name, HAnimMapping.MecanimToHAnimMap[b]);
                 }
@@ -82,7 +84,12 @@ namespace UnityAsapIntegration.ASAP {
             for (int b = 0; b < bones.Length; b++) {
                 VJoint parent = null;
                 if (b > 0) {
-                    parent = lut[bones[b].parent.name];
+                    Transform parent_bone =  bones[b];
+                    do {
+                        parent_bone = parent_bone.parent;
+                    } while (parent_bone != null && !lut.ContainsKey(parent_bone.name));
+                    parent = lut[parent_bone.name];
+
                     if (GetHAnimName(parent.id) == "") {
                         Debug.Log(bones[b].name + " is not child of HAnim bone (" + parent.id + ").");
                     }
@@ -111,9 +118,9 @@ namespace UnityAsapIntegration.ASAP {
         public virtual void AppendChildren(Transform root, List<Transform> transforms) {
             if (GetHAnimName(root.name) != "") {
                 transforms.Add(root);
-                foreach (Transform child in root) {
-                    AppendChildren(child, transforms);
-                }
+            } 
+            foreach (Transform child in root) {
+                AppendChildren(child, transforms);
             }
         }
 
@@ -144,6 +151,8 @@ namespace UnityAsapIntegration.ASAP {
                 return HAnimMappingDefaults[boneName];
             } else if (System.Array.IndexOf(HAnimMapping.HAnimBones, boneName) > -1) {
                 return boneName;
+            } else if (boneName == humanoidRoot.name) {
+                return HAnimMapping.HumanoidRoot;
             } else {
                 return "";
             }
@@ -212,8 +221,8 @@ namespace UnityAsapIntegration.ASAP {
                 GetBoneList(transform);
             }
 
-            AlignCos();
             AlignBones();
+            AlignCos();
 
             VJoint[] vJoints = GenerateVJoints();
             IFaceTarget[] faceTargets = new IFaceTarget[0] {};

@@ -153,6 +153,7 @@ public class HAnimMapping : MonoBehaviour {
         {HumanBodyBones.RightFoot, r_ankle},
         {HumanBodyBones.Spine, vt10},
         {HumanBodyBones.Chest, vt6},
+        {HumanBodyBones.UpperChest, vt1},
         {HumanBodyBones.Neck, vc4},
         {HumanBodyBones.Head, skullbase},
         {HumanBodyBones.LeftShoulder, l_sternoclavicular},

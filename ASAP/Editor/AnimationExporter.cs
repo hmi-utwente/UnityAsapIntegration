@@ -116,7 +116,11 @@ namespace UnityAsapIntegration.ASAP.Editor {
                 animation.AddClip(animationClips[newCurrentClipIndex], animationClips[newCurrentClipIndex].name);
                 animation.clip = animationClips[newCurrentClipIndex];
                 Selection.activeGameObject = animationRig.gameObject;
-                EditorApplication.ExecuteMenuItem("Window/Animation");
+                try {
+                    EditorApplication.ExecuteMenuItem("Window/Animation");
+                } catch (Exception e) {
+
+                }
                 //if (blankPose != null) blankPose.SampleAnimation(animationRig.vjointRoot.parent.gameObject, 0.0f);
                 //if (restPose != null) restPose.SampleAnimation(animationRig.vjointRoot.parent.gameObject, 0.0f);
                 animationRig.ResetToBlankPose();
